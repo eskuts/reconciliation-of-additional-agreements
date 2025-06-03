@@ -1,0 +1,7 @@
+/results
+__*
+*.env
+/.idea
+legacy.py
+*.xlsx
+consts/special_cases.py
