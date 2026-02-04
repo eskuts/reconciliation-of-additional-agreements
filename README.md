@@ -1,25 +1,23 @@
-# **Сверка транспортной работы**
-## read_docx.py
-    парсит данные из приложений к актам, результат в виде, готовом для добавления в файл "ГК... ДС..."
-    аргументы: AGG_NUM, ADD_NUMBER
-   *NB!*
-   
-       1. три типа интервалов с дд.мм.гггг; с дд.мм.гггг по дд.мм.гггг; на дд.мм.гггг
-            а) с дд.мм.гггг вностися одна строка тип даты "начало"
-            б) с дд.мм.гггг по дд.мм.гггг вносятся две строки, "начало_интервала" и "конец_интервала" (в этой строке +1 день к дате), рейсы и км остаются пустыми для заполнения вручную
-            в) на дд.мм.гггг считывается как с дд.мм.гггг по дд.мм.гггг, где дата начала и конца одна и та же, логика та же, что и в п.б)
-        2. удаление дубликатов, если две строки с тем же маршрутом и датой, то строка с типом даты "конец_интервала" удаляется
-## plan_by_last_add_aggs.py
-    план рейсов и км по последним ДС для финотдела
-    аргументы: --last_ADD_NUMBERS номера последних ДС (через запятую в порядке возрастания номера ГК), 
-              --first_n_last_days_of_month первый и последний дни месяца, за которй нужен план
-    пример запуска: python plan_by_last_add_aggs.py --last_ADD_NUMBERS "9, 31, 31, 29, 22" --first_n_last_days_of_month "07.01.2024-07.31.2024"
-## main.py
-    основной скрипт 
-    аргументы AGG_NUM, ADD_NUMBER
-# **Алгоритм проведения сверки транспортной работы:**
-    1. запуск read_docx.py, добавить вручную строки в эксель файл 
-    2. если в основном файле "ДС №XX" указаны изменеия для праздничных дней для маршрутов вне приложений, то они вносятся в файл holidays.xlsx, каждый ДС на отдельном листе. Одиночную дату записывать в ячейку начиная с '
-    3. запуск main.py
-        
-    
+# Public Contract Event Monitor (Telegram Bot)
+
+I built this tool to automate the tracking of updates in public procurement contracts. Instead of manually checking for updates, the system monitors specific contracts and sends real-time notifications to a Telegram channel whenever a new event is registered.
+
+### The Problem
+Monitoring government contract changes is a tedious task. Important events (new links, documents, or status changes) can be easily missed if you don't check the portal constantly. I needed a lightweight service that tracks history and alerts stakeholders immediately.
+
+### How it Works
+The program follows a simple but effective logic to ensure no duplicates and monitoring:
+
+1.  **State Management:** It uses a local `last_events.json` file to store the "last known state" (unique links, dates, and event text) for each contract.
+2.  **Comparison Engine:** Every time the script runs, it fetches all current events from the source and compares them with the JSON file.
+3.  **Telegram Integration:** If a new event is detected, it’s formatted and sent via the Telegram Bot API to a dedicated channel.
+4.  **Persistence:** After notifying, the script updates the local JSON file to stay current for the next run.
+
+### Setup & Installation
+The project is configured for easy deployment via virtual environments and environment variables:
+
+1. **Clone & Environment:**
+   ```bash
+   git clone git@github.com:EKuts3P/zakupki.git
+   python -m venv venv
+   source venv/bin/activate  # or venv\Scripts\activate on Windows
